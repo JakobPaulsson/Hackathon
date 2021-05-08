@@ -3,24 +3,22 @@ class Car {
    *
    * @param {Vector} center vector for the middle point of the car
    */
-  constructor(center, window) {
+  constructor(center) {
     this.center = center;
     this.velocity = 3; //meters/second
     this.angle = 0; //radians
     this.turningLeft = false;
     this.turningRight = false;
-    this.window = window;
   }
 
-  handleKeysCar() {
-    this.window.addEventListener("keydown", (event) => {
-        this.handleKeysDown(event);
+  handleKeysCar(window) {
+    window.addEventListener("keydown", (event) => {
+      this.handleKeysDown(event);
     });
-    this.window.addEventListener("keyup", (event) => {
-        this.handleKeysUp(event);
+    window.addEventListener("keyup", (event) => {
+      this.handleKeysUp(event);
     });
   }
-
 
   handleKeysDown(event) {
     const key = event.keyCode;
@@ -91,18 +89,16 @@ class Car {
 
   update() {
     this.move();
-    console.log(this.turningLeft);
     if (this.turningLeft) this.rotate(-TURNING_SPEED);
     if (this.turningRight) this.rotate(TURNING_SPEED);
   }
 
   render(context) {
+    context.fillStyle = "#ffff00";
     context.fillRect(this.center.x, this.center.y, 10, 10);
   }
 
   carToString() {
-    return `x: ${this.center.x.toFixed(2)} y: ${this.center.y.toFixed(
-      2
-    )} angle: ${this.angle.toFixed(2)}`;
+    return `x: ${this.center.x.toFixed(2)} y: ${this.center.y.toFixed(2)} angle: ${this.angle.toFixed(2)}`;
   }
 }

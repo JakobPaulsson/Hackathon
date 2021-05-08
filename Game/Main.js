@@ -7,11 +7,11 @@ function run() {
   let gameState = new GameState(window);
   setInterval(function () {
     gameState.clear(context, CANVAS_WIDTH, CANVAS_HEIGHT);
-    gameState.handleKeys();
+    gameState.handleKeys(window);
     gameState.update();
     gameState.render(context);
-    console.log(gameState.gameStateToString());
   }, 1000/FPS);
+  console.log(gameState.gameStateToString());
 }
 
 

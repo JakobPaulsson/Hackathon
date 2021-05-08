@@ -11,8 +11,10 @@ const START_X = 500;
 const START_Y = 500;
 
 //MAP
-const TILE_MAP_WIDTH = 100;
+const TILE_MAP_WIDTH = 50;
 const TILE_WIDTH = 10;
+const NUMBER_OF_ROCKS = 50;
 const GRASS = 0;
 const ROAD = 1;
-const STONE = 2;
+const ROCK = 2;
+

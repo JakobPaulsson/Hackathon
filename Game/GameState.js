@@ -1,14 +1,11 @@
 class GameState {
-  constructor(window) {
-    this.window = window;
+  constructor() {
     this.map = new Map();
-    this.car = new Car(new Vector(START_X, START_Y), window);
+    this.car = new Car(new Vector(START_X, START_Y));
   }
 
-  initialize() {}
-
-  handleKeys() {
-    this.car.handleKeysCar();
+  handleKeys(window) {
+    this.car.handleKeysCar(window);
   }
 
   update() {
@@ -25,6 +22,6 @@ class GameState {
   }
 
   gameStateToString() {
-    return `Car: ${this.car.carToString()}`;
+    return "Car: " + this.car.carToString() + "\nMap:\n" + this.map.mapToString() 
   }
 }
