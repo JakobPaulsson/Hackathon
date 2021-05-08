@@ -56,9 +56,14 @@ class Map {
         for(var i = 0; i < NUMBER_OF_ROCKS; i++) {
             var randomRock;
             do {
-                randomRock = new Vector(Math.floor(Math.random() * 50), Math.floor(Math.random() * 50));
-
-            } while(this.map[randomRock.x][randomRock.y] === ROAD )
+                var random1 =  Math.floor(Math.random() * 48) + 1
+                var random2 = Math.floor(Math.random() * 48) + 1
+                randomRock = new Vector(random1, random2);
+            } while(this.map[randomRock.x][randomRock.y] === ROAD || 
+                    this.map[randomRock.x+1][randomRock.y] === ROAD || 
+                    this.map[randomRock.x-1][randomRock.y] === ROAD || 
+                    this.map[randomRock.x][randomRock.y+1] === ROAD || 
+                    this.map[randomRock.x][randomRock.y-1] === ROAD)
             this.map[randomRock.x][randomRock.y] = ROCK;
         }
     }
