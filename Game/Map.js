@@ -3,9 +3,11 @@ class Map {
         this.width = TILE_MAP_WIDTH;
         this.height = TILE_MAP_WIDTH;
         this.map = [];
+        this.checkPoints = [];
         this.initializeMap();
         this.createMap();
         this.generateRocks();
+        this.generateWalls();
     }
 
     initializeMap() {
@@ -19,37 +21,71 @@ class Map {
         this.map = array;
     }
 
-    addHorizontalRoad(startVector, endVector) {
-        if(startVector.y !== endVector.y) throw new Error('Horizontal road must have same start-y and end-y values');
-        if(startVector.x > endVector.x) throw new Error('Horizontal road must have larger end-x than start-x')
-        const y = startVector.y;
-
-        for(var i = startVector.x; i <= endVector.x; i++) {
-            this.map[i][y] = ROAD;
+    addRoad(startVector, endVector) {
+        if(startVector.x === endVector.x) {
+            for(var i = startVector.y; i <= endVector.y; i++) {
+                this.map[startVector.x+1][i] = ROAD;
+                this.map[startVector.x][i] = ROAD;
+                this.map[startVector.x-1][i] = ROAD;
+            }
+        } else if(startVector.y === endVector.y) {
+            for(var i = startVector.x; i <= endVector.x; i++) {
+                this.map[i][startVector.y+1] = ROAD;
+                this.map[i][startVector.y] = ROAD;
+                this.map[i][startVector.y-1] = ROAD;
+            }
+        } else {
+            throw new Error('Invalid goal');
         }
     }
 
-    addVerticalRoad(startVector, endVector) {
-        if(startVector.x !== endVector.x) throw new Error('Vertical road must have same start-x and end-x values');
-        if(startVector.y > endVector.y) throw new Error('Horizontal road must have larger end-y than start-y')
-        const x = startVector.x;
-
-        for(var i = startVector.y; i <= endVector.y; i++) {
-            this.map[x][i] = ROAD;
+    addGoal(startVector, endVector) {
+        if(startVector.x === endVector.x) {
+            for(var i = startVector.y; i <= endVector.y; i++) {
+                this.map[startVector.x][i] = GOAL;
+            }
+        } else if(startVector.y === endVector.y) {
+            for(var i = startVector.x; i <= endVector.x; i++) {
+                this.map[i][startVector.y] = GOAL;
+            }
+        } else {
+            throw new Error('Invalid goal');
         }
     }
 
+    addCheckPoint(startVector, endVector) {
+        var checkPointTiles = [];
+        if(startVector.x === endVector.x) {
+            for(var i = startVector.y; i <= endVector.y; i++) {
+                this.map[startVector.x][i] = CHECKPOINT;
+                checkPointTiles.push([startVector.x, i]);
+            }
+        } else if(startVector.y === endVector.y) {
+            for(var i = startVector.x; i <= endVector.x; i++) {
+                this.map[i][startVector.y] = CHECKPOINT;
+                checkPointTiles.push([i, startVector.y]);
+            }
+        } else {
+            throw new Error('Invalid goal');
+        }
+        this.checkPoints.push(checkPointTiles);
+    }
+    
     addRock(vector) {
         this.map[vector.x][vector.y] = ROCK;
     }
 
     createMap() {
-        this.addHorizontalRoad(new Vector(10, 5), new Vector(40, 5));
-        this.addVerticalRoad(new Vector(40, 5), new Vector(40, 40));
-        this.addHorizontalRoad(new Vector(20, 40), new Vector(40, 40));
-        this.addVerticalRoad(new Vector(20, 15), new Vector(20, 40));
-        this.addHorizontalRoad(new Vector(10, 15), new Vector(20, 15));
-        this.addVerticalRoad(new Vector(10, 5), new Vector(10, 15));
+        this.addRoad(new Vector(10, 5), new Vector(40, 5));
+        this.addRoad(new Vector(40, 5), new Vector(40, 40));
+        this.addRoad(new Vector(20, 40), new Vector(40, 40));
+        this.addRoad(new Vector(20, 15), new Vector(20, 40));
+        this.addRoad(new Vector(10, 15), new Vector(20, 15));
+        this.addRoad(new Vector(10, 5), new Vector(10, 15));
+        this.addGoal(new Vector(39, 30), new Vector(41, 30));
+        this.addCheckPoint(new Vector(39, 10), new Vector(41, 10));
+        this.addCheckPoint(new Vector(15, 4), new Vector(15, 6));
+        this.addCheckPoint(new Vector(19, 30), new Vector(21, 30));
     }
 
     generateRocks() {
@@ -68,9 +104,26 @@ class Map {
         }
     }
 
-    update() {
-        //update car
-        //
+    generateWalls() {
+        //First column
+        for(var i = 0; i < TILE_MAP_WIDTH; i++) {
+            this.map[0][i] = VERTICAL_WALL;
+            this.map[TILE_MAP_WIDTH-1][i] = VERTICAL_WALL;
+        }
+
+        //Top and bottom rows
+        for(var i = 1; i < TILE_MAP_WIDTH - 1; i++) {
+            this.map[i][0] = HORIZONTAL_WALL;
+            this.map[i][TILE_MAP_WIDTH - 1] = HORIZONTAL_WALL;
+        }
+    }
+
+    getTile(vector) {
+        return this.map[vector.x][vector.y];
+    }
+
+    getCheckpoints() {
+        return this.checkPoints;
     }
 
     render(context) {
@@ -88,6 +141,15 @@ class Map {
                     case ROCK:
                         context.fillStyle = "#5c5c59";
                         break;
+                    case HORIZONTAL_WALL:
+                    case VERTICAL_WALL:
+                        context.fillStyle = "#574000"
+                        break;
+                    case GOAL:
+                        context.fillStyle = "#ffffff"
+                        break;
+                    case CHECKPOINT:
+                        context.fillStyle = "#4254f5"
                 }
                 context.fillRect(i * rectangleWidth, j * rectangleWidth, rectangleWidth, rectangleWidth);
             }

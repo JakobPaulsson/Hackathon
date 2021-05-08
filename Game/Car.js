@@ -1,14 +1,13 @@
 class Car {
-  /**
-   *
-   * @param {Vector} center vector for the middle point of the car
-   */
-  constructor(center) {
-    this.center = center;
-    this.velocity = 3; //meters/second
-    this.angle = 0; //radians
+  constructor(checkPoints) {
+    this.center = new Vector(START_X, START_Y);
+    this.velocity = ROAD_VELOCITY; //meters/second
+    this.angle = START_ANGLE; //radians
     this.turningLeft = false;
     this.turningRight = false;
+    this.currentLap = 1;
+    this.currentCheckpoint = 0;
+    this.checkPoints = checkPoints;
   }
 
   handleKeysCar(window) {
@@ -45,7 +44,7 @@ class Car {
       case 38:
         break;
       default:
-        console.log("unhandled key: " + event.keyCode);
+        //console.log("unhandled key: " + event.keyCode);
         break;
     }
   }
@@ -64,7 +63,7 @@ class Car {
         this.turningRight = false;
         break;
       default:
-        console.log("unhandled key: " + event.keyCode);
+        //console.log("unhandled key: " + event.keyCode);
         break;
     }
   }
@@ -87,18 +86,87 @@ class Car {
     this.center.y += Math.sin(this.angle) * this.velocity;
   }
 
-  update() {
-    this.move();
+  restart() {
+    this.center.x = START_X;
+    this.center.y = START_Y;
+    this.angle = START_ANGLE;
+    console.log(this.currentCheckpoint);
+  }
+
+  checkTurn() {
     if (this.turningLeft) this.rotate(-TURNING_SPEED);
     if (this.turningRight) this.rotate(TURNING_SPEED);
   }
 
+  checkGoal() {
+    if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) {
+      this.currentCheckpoint = 0;
+      this.currentLap++;
+    }
+  }
+
+  checkPoint() {
+    if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) return;
+    for(var i = 0; i < this.checkPoints[this.currentCheckpoint].length; i++) {
+
+      if (
+        Math.floor(this.center.x) === this.checkPoints[this.currentCheckpoint][i][0] &&
+        Math.floor(this.center.y) === this.checkPoints[this.currentCheckpoint][i][1]
+      ) {
+        this.currentCheckpoint++;
+        return;
+      }
+    }
+  }
+
+  bounceHorizontal() {
+    this.angle = 2 * Math.PI - this.angle;
+    this.move();  
+  }
+
+  bounceVertical() {
+    console.log("meme");
+    this.angle = Math.PI - this.angle;
+    this.move();
+  }
+
+  checkTile(tile) {
+    if (tile === GRASS) this.velocity = GRASS_VELOCITY;
+    if (tile === ROAD) this.velocity = ROAD_VELOCITY;
+    if (tile === ROCK) this.restart();
+    if (tile === HORIZONTAL_WALL) this.bounceHorizontal();
+    if (tile === VERTICAL_WALL) this.bounceVertical();
+    if (tile === GOAL) this.checkGoal();
+    if (tile === CHECKPOINT) this.checkPoint();
+  }
+
+  update(tile) {
+    this.checkTile(tile);
+    this.move();
+    this.checkTurn();
+  }
+
   render(context) {
+    const rectangleWidth = CANVAS_WIDTH / TILE_MAP_WIDTH;
     context.fillStyle = "#ffff00";
-    context.fillRect(this.center.x, this.center.y, 10, 10);
+    context.fillRect(
+      rectangleWidth * this.center.x,
+      rectangleWidth * this.center.y,
+      10,
+      10
+    );
+    context.fillStyle = "#ffffff";
+    context.font = "30px Arial";
+    context.fillText(
+      "Current lap: " + this.currentLap + "/" + LAPS,
+      CANVAS_WIDTH - 250,
+      55
+    );
   }
 
   carToString() {
-    return `x: ${this.center.x.toFixed(2)} y: ${this.center.y.toFixed(2)} angle: ${this.angle.toFixed(2)}`;
+    return `x: ${this.center.x.toFixed(2)} y: ${this.center.y.toFixed(
+      2
+    )} angle: ${this.angle.toFixed(2)}`;
   }
 }
