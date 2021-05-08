@@ -8,4 +8,8 @@ class PlayerCar extends Car {
         //update car
         //
     }
+
+    render() {
+        
+    }
 }

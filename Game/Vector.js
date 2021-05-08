@@ -4,19 +4,11 @@ class Vector {
         this.y = y;
     }
 
-    setX(x) {
+    set xPos(x) {
         this.x = x;
     }
 
-    setY(y) {
+    set yPos(y) {
         this.y = y;
-    }
-
-    get x() {
-        return this.x;
-    }
-
-    get y() {
-        return this.y;
     }
 }
