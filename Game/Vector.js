@@ -5,7 +5,13 @@ class Vector {
     }
 
     compare(vector) {
+        if(!vector?.x || !vector?.y) throw new Error('Cannot compare with non-vector!');
         return this.x === vector.x && this.y === vector.y;
+    }
+
+    lengthTo(vector) {
+        if(!vector?.x || !vector?.y) throw new Error('Cannot compare with non-vector!');
+        return Math.sqrt((this.x-vector.x)**2+(this.y-vector.y)**2);
     }
 
     set xPos(x) {

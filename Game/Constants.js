@@ -20,7 +20,7 @@ const TILE_MAP_WIDTH = 50;
 const TILE_WIDTH = 10;
 const NUMBER_OF_ROCKS = 200;
 
-//TILES
+//TIL5
 const GRASS = 0;
 const ROAD = 1;
 const ROCK = 2;
@@ -30,7 +30,7 @@ const GOAL = 5;
 const CHECKPOINT = 6;
 
 //AI
-const TEST_STEPS = 25;
+const TEST_STEPS = 15;
 const RIGHT = 0;
 const NOOP = 1;
 const LEFT = 2;

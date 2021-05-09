@@ -1,6 +1,6 @@
 class AICar {
-  constructor(checkPoints) {
-    this.center = new Vector(START_X_AI, START_Y_AI);
+  constructor(checkPoints, startX, startY) {
+    this.center = new Vector(startX, startY);
     this.velocity = ROAD_VELOCITY; //meters/second
     this.angle = START_ANGLE; //radians
     this.turningLeft = false;
@@ -8,6 +8,7 @@ class AICar {
     this.currentLap = 1;
     this.currentCheckpoint = 0;
     this.checkPoints = checkPoints;
+    this.bestMove = NOOP;
   }
 
   /**
@@ -37,7 +38,6 @@ class AICar {
     testMoves[LEFT] = leftMoveVector;
     testMoves[RIGHT] = rightMoveVector;
     testMoves[NOOP] = noopMoveVector;
-    console.log(testMoves);
     return testMoves;
   }
 
@@ -107,15 +107,17 @@ class AICar {
   }
 
   checkPoint() {
-    if (this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) return;
     for (var i = 0; i < this.checkPoints[this.currentCheckpoint].length; i++) {
       if (
         Math.floor(this.center.x) ===
-          this.checkPoints[this.currentCheckpoint][i][0] &&
+          this.checkPoints[this.currentCheckpoint][i].x &&
         Math.floor(this.center.y) ===
-          this.checkPoints[this.currentCheckpoint][i][1]
+          this.checkPoints[this.currentCheckpoint][i].y
       ) {
         this.currentCheckpoint++;
+        if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) {
+          this.currentCheckpoint = 0;
+        }
         return;
       }
     }
@@ -142,6 +144,7 @@ class AICar {
   }
 
   update(tile, bestMove) {
+    this.checkTile(tile);
     if (bestMove === -1)
       throw new Error("The calculated best move is undefined!");
     if (bestMove === RIGHT) {
@@ -152,9 +155,18 @@ class AICar {
       this.turningRight = false;
       this.turningLeft = true;
     }
-    this.checkTile(tile);
     this.move();
     this.checkTurn();
+    this.bestMove = bestMove;
+  }
+
+  nextMoveStringified() {
+    const nextMove = this.bestMove;
+    var nextMoveString = ";"
+    if(nextMove === NOOP) nextMoveString = "NOOP";
+    if(nextMove === LEFT) nextMoveString = "LEFT";
+    if(nextMove === RIGHT) nextMoveString = "RIGHT";
+    return nextMoveString;
   }
 
   render(context) {
@@ -166,11 +178,21 @@ class AICar {
       10,
       10
     );
+    context.fillStyle = "#ffffff";
+    context.font = "30px Arial";
+    context.fillText(
+      "AI checkpoint: " + this.currentCheckpoint + "/" + NUMBER_OF_CHECKPOINTS,
+      40,
+      55
+    );
+    context.fillText(
+      "AI lap: " + this.currentLap + "/" + LAPS,
+      40,
+      90
+    );
   }
 
-  AICarToString() {
-    return `x: ${this.center.x.toFixed(2)} y: ${this.center.y.toFixed(
-      2
-    )} angle: ${this.angle.toFixed(2)}`;
+  carToString() {
+    return "x: " + this.center.x.toFixed(2) + " y: " + this.center.y.toFixed(2) + " angle: " + this.angle.toFixed(2) + " nextMove: " + this.nextMoveStringified();
   }
 }

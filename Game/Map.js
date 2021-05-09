@@ -4,6 +4,7 @@ class Map {
         this.height = TILE_MAP_WIDTH;
         this.map = [];
         this.checkPoints = [];
+        this.goal = [];
         this.initializeMap();
         this.createMap();
         this.generateRocks();
@@ -51,6 +52,7 @@ class Map {
         } else {
             throw new Error('Invalid goal');
         }
+        this.goal = [startVector, endVector];
     }
 
     addCheckPoint(startVector, endVector) {
@@ -58,12 +60,12 @@ class Map {
         if(startVector.x === endVector.x) {
             for(var i = startVector.y; i <= endVector.y; i++) {
                 this.map[startVector.x][i] = CHECKPOINT;
-                checkPointTiles.push([startVector.x, i]);
+                checkPointTiles.push(new Vector(startVector.x, i));
             }
         } else if(startVector.y === endVector.y) {
             for(var i = startVector.x; i <= endVector.x; i++) {
                 this.map[i][startVector.y] = CHECKPOINT;
-                checkPointTiles.push([i, startVector.y]);
+                checkPointTiles.push(new Vector(i, startVector.y));
             }
         } else {
             throw new Error('Invalid goal');
@@ -122,26 +124,87 @@ class Map {
         return this.map[vector.x][vector.y];
     }
 
-    getBestMove(testVectors) {
-        const noopTileX = Math.floor(testVectors[NOOP].x);
-        const noopTileY = Math.floor(testVectors[NOOP].y);
-        if(noopTileX < TILE_MAP_WIDTH && noopTileY < TILE_MAP_WIDTH && (this.map[noopTileX][noopTileY] === ROAD || this.map[noopTileX][noopTileY] === CHECKPOINT)) return NOOP;
-        const leftTileX = Math.floor(testVectors[LEFT].x);
-        const leftTileY = Math.floor(testVectors[LEFT].y);
-        if(leftTileX < TILE_MAP_WIDTH && leftTileY < TILE_MAP_WIDTH && (this.map[leftTileX][leftTileY] === ROAD || this.map[leftTileX][leftTileY] === CHECKPOINT)) return LEFT;
-        const rightTileX = Math.floor(testVectors[RIGHT].x);
-        const rightTileY = Math.floor(testVectors[RIGHT].y);
-        if(rightTileX < TILE_MAP_WIDTH && rightTileY < TILE_MAP_WIDTH && (this.map[rightTileX][rightTileY] === ROAD || this.map[rightTileX][rightTileY] === CHECKPOINT)) return RIGHT;
-        if(noopTileX < TILE_MAP_WIDTH && noopTileY < TILE_MAP_WIDTH && this.map[noopTileX][noopTileY] === GRASS) return NOOP;
-        if(leftTileX < TILE_MAP_WIDTH && leftTileY < TILE_MAP_WIDTH && this.map[leftTileX][leftTileY] === GRASS) return LEFT;
-        if(rightTileX < TILE_MAP_WIDTH && rightTileY < TILE_MAP_WIDTH && this.map[rightTileX][rightTileY] === GRASS) return RIGHT;
-        console.log("NoopX: " + noopTileX);
-        console.log("NoopY: " + noopTileY);
-        console.log("LeftX: " + leftTileX);
-        console.log("LeftY: " + leftTileY);
-        console.log("RightX: " + rightTileX);
-        console.log("RightY: " + rightTileY + "\n\n");
+    lengthToVector(vector, otherVector) {
+        return vector.lengthTo(otherVector);
+    }
+
+    getBestTileToGetBackToRoad(carVector, noopVector, leftVector, rightVector, nextCheckPointVector) {
+        var possibleVectors = []
+        for(var i = carVector.x - 5; i < carVector.x + 5 ; i++) {
+            for(var j = carVector.y - 5; j < carVector.x + 5 ; j++) {
+                var possibleVector = new Vector(i, j)
+                if(this.map[possibleVector.x][possibleVector.y] === ROAD) possibleVectors.push(possibleVector);
+            }
+        }
+        var bestRoadTile = this.getClosestRoadTiles(possibleVectors, nextCheckPointVector);
+        var noopLengthToBestRoadTile = this.lengthToVector(noopVector, bestRoadTile);
+        var leftLengthToBestRoadTile = this.lengthToVector(leftVector, bestRoadTile); 
+        var rightLengthToBestRoadTile = this.lengthToVector(rightVector, bestRoadTile); 
+        var bestLength = Math.max(noopLengthToBestRoadTile, leftLengthToBestRoadTile, rightLengthToBestRoadTile);
+        if (bestLength == noopLengthToBestRoadTile) return NOOP;
+        if (bestLength == leftLengthToBestRoadTile) return LEFT;
+        if (bestLength == rightLengthToBestRoadTile) return RIGHT;
         return -1;
+    }
+
+    getClosestRoadTiles(possibleVectors, nextCheckPointVector) {
+        var lengths = []
+        for(var i = 0; i < possibleVectors.length; i++) {
+            lengths.push(this.lengthToVector(possibleVectors[i], nextCheckPointVector));
+        }
+        var bestVector = lengths[lengths.indexOf(Math.min(lengths))];
+        return bestVector;
+    }
+
+    getClosestToCheckPoint(noopVector, leftVector, RightVector, nextCheckPointVector) {
+        const noopLength = this.lengthToVector(noopVector, nextCheckPointVector)
+        const leftLength = this.lengthToVector(leftVector, nextCheckPointVector)
+        const rightLength = this.lengthToVector(RightVector, nextCheckPointVector)
+        const minimumLength = Math.min(Number(noopLength), Number(leftLength), Number(rightLength));
+        if(minimumLength === noopLength) return NOOP;
+        if(minimumLength === leftLength) return LEFT;
+        if(minimumLength === rightLength) return RIGHT;
+        throw new Error('Could not calculate minimum value!');
+    }
+
+    getBestMove(testVectors, carVector, currentCheckpoint) {
+        var nextCheckPointVector;
+        //first coordinate of goal
+        if(currentCheckpoint === NUMBER_OF_CHECKPOINTS) nextCheckPointVector = this.goal[0];
+        //first coordinate of next checkpoint
+        else nextCheckPointVector = this.checkPoints[currentCheckpoint][0];
+        
+        const noopVector = new Vector(Math.floor(testVectors[NOOP].x), Math.floor(testVectors[NOOP].y));
+        const noopTile = this.map[noopVector.x][noopVector.y];
+
+        const leftVector = new Vector(Math.floor(testVectors[LEFT].x), Math.floor(testVectors[LEFT].y))
+        const leftTile = this.map[leftVector.x][leftVector.y]
+
+        const rightVector = new Vector(Math.floor(testVectors[RIGHT].x), Math.floor(testVectors[RIGHT].y));
+        const rightTile = this.map[rightVector.x][rightVector.y]
+
+        const noopTileWithinBorder = noopVector.x < TILE_MAP_WIDTH && noopVector.y < TILE_MAP_WIDTH;
+        const noopTileIsDesiredTile = noopTile === ROAD || noopTile === CHECKPOINT || noopTile === GOAL;
+        const noopTileIsNonDesiredTile = noopTile === GRASS || noopTile === ROCK || noopTile == HORIZONTAL_WALL || noopTile == VERTICAL_WALL;
+
+        const leftTileWithinBorder = leftVector.x < TILE_MAP_WIDTH && leftVector.y < TILE_MAP_WIDTH;
+        const leftTileIsDesiredTile = leftTile === ROAD || leftTile === CHECKPOINT || leftTile === GOAL;
+        const leftTileIsNonDesiredTile = leftTile === GRASS || leftTile === ROCK || leftTile == HORIZONTAL_WALL || leftTile == VERTICAL_WALL;
+
+        const rightTileWithinBorder = rightVector.x < TILE_MAP_WIDTH && rightVector.y < TILE_MAP_WIDTH;
+        const rightTileIsDesiredTile = rightTile === ROAD || rightTile === CHECKPOINT || rightTile === GOAL;
+        const rightTileIsNonDesiredTile = rightTile === GRASS || rightTile === ROCK || rightTile == HORIZONTAL_WALL || rightTile == VERTICAL_WALL;
+
+        //const bestAction = this.getBestTileToGetBackToRoad(carVector, noopVector, leftVector, rightVector, nextCheckPointVector);
+        if(noopTileWithinBorder && noopTileIsDesiredTile) return NOOP;
+        if(leftTileWithinBorder && leftTileIsDesiredTile) return LEFT;
+        if(rightTileWithinBorder && rightTileIsDesiredTile) return RIGHT;
+        //return bestAction;
+        
+        if(noopTileWithinBorder && noopTileIsNonDesiredTile) return NOOP;
+        if(leftTileWithinBorder && leftTileIsNonDesiredTile) return LEFT;
+        if(rightTileWithinBorder && rightTileIsNonDesiredTile) return RIGHT;
+        return NOOP;
     }
 
     getCheckpoints() {
