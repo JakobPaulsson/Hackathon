@@ -123,7 +123,8 @@ class Map {
     getTile(vector) {
         return this.map[vector.x][vector.y];
     }
-/*
+    
+    /*
     lengthToVector(vector, otherVector) {
         return vector.lengthTo(otherVector);
     }
