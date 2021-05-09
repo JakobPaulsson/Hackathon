@@ -108,8 +108,8 @@ class Car {
     if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) return;
     for(var i = 0; i < this.checkPoints[this.currentCheckpoint].length; i++) {
       if (
-        Math.floor(this.center.x) === this.checkPoints[this.currentCheckpoint][i][0] &&
-        Math.floor(this.center.y) === this.checkPoints[this.currentCheckpoint][i][1]
+        Math.floor(this.center.x) === this.checkPoints[this.currentCheckpoint][i].x &&
+        Math.floor(this.center.y) === this.checkPoints[this.currentCheckpoint][i].y
       ) {
         this.currentCheckpoint++;
         return;

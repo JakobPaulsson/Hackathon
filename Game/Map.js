@@ -123,11 +123,12 @@ class Map {
     getTile(vector) {
         return this.map[vector.x][vector.y];
     }
-
+/*
     lengthToVector(vector, otherVector) {
         return vector.lengthTo(otherVector);
     }
 
+    
     getBestTileToGetBackToRoad(carVector, noopVector, leftVector, rightVector, nextCheckPointVector) {
         var possibleVectors = []
         for(var i = carVector.x - 5; i < carVector.x + 5 ; i++) {
@@ -152,9 +153,15 @@ class Map {
         for(var i = 0; i < possibleVectors.length; i++) {
             lengths.push(this.lengthToVector(possibleVectors[i], nextCheckPointVector));
         }
-        var bestVector = lengths[lengths.indexOf(Math.min(lengths))];
-        return bestVector;
+        var bestVector = lengths[lengths.indexOf(Math.min.apply(Math, lengths))];
+        for(var i = 0; i < possibleVectors.length; i++) {
+            if(this.lengthToVector(possibleVectors[i], nextCheckPointVector) === bestVector) {
+                return possibleVectors[i];
+            }
+        }
+        return null;
     }
+    
 
     getClosestToCheckPoint(noopVector, leftVector, RightVector, nextCheckPointVector) {
         const noopLength = this.lengthToVector(noopVector, nextCheckPointVector)
@@ -166,6 +173,7 @@ class Map {
         if(minimumLength === rightLength) return RIGHT;
         throw new Error('Could not calculate minimum value!');
     }
+    */
 
     getBestMove(testVectors, carVector, currentCheckpoint) {
         var nextCheckPointVector;
@@ -195,10 +203,10 @@ class Map {
         const rightTileIsDesiredTile = rightTile === ROAD || rightTile === CHECKPOINT || rightTile === GOAL;
         const rightTileIsNonDesiredTile = rightTile === GRASS || rightTile === ROCK || rightTile == HORIZONTAL_WALL || rightTile == VERTICAL_WALL;
 
-        //const bestAction = this.getBestTileToGetBackToRoad(carVector, noopVector, leftVector, rightVector, nextCheckPointVector);
         if(noopTileWithinBorder && noopTileIsDesiredTile) return NOOP;
         if(leftTileWithinBorder && leftTileIsDesiredTile) return LEFT;
         if(rightTileWithinBorder && rightTileIsDesiredTile) return RIGHT;
+        //const bestAction = this.getBestTileToGetBackToRoad(carVector, noopVector, leftVector, rightVector, nextCheckPointVector);
         //return bestAction;
         
         if(noopTileWithinBorder && noopTileIsNonDesiredTile) return NOOP;
