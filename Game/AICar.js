@@ -101,12 +101,13 @@ class AICar {
 
   checkGoal() {
     if (this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) {
-      this.currentCheckpoint = 0;
       this.currentLap++;
+      this.currentCheckpoint = 0;
     }
   }
 
   checkPoint() {
+    if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) return;
     for (var i = 0; i < this.checkPoints[this.currentCheckpoint].length; i++) {
       if (
         Math.floor(this.center.x) ===
@@ -115,9 +116,6 @@ class AICar {
           this.checkPoints[this.currentCheckpoint][i].y
       ) {
         this.currentCheckpoint++;
-        if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) {
-          this.currentCheckpoint = 0;
-        }
         return;
       }
     }

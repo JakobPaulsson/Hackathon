@@ -19,7 +19,7 @@ function runGame(gameState, context, window) {
   setInterval(function () {
     gameState.clear(context, CANVAS_WIDTH, CANVAS_HEIGHT);
     gameState.handleKeys(window);
-    gameState.update();
+    gameState.update(context);
     gameState.render(context);
   }, 1000/FPS);
 }

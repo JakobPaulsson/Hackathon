@@ -9,7 +9,7 @@ class GameState {
     this.car.handleKeysCar(window);
   }
 
-  update() {
+  update(context) {
     //AI
     const aiCarVector = new Vector(Math.floor(this.aicar.center.x), Math.floor(this.aicar.center.y))
     const testVectors = this.aicar.testAllMoves();
@@ -25,7 +25,8 @@ class GameState {
   }
 
   render(context) {
-    this.map.render(context);
+    const testVectors = this.aicar.testAllMoves();
+    this.map.render(context, testVectors);
     this.car.render(context);
     this.aicar.render(context);
   }
