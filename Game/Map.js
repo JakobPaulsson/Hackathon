@@ -122,6 +122,28 @@ class Map {
         return this.map[vector.x][vector.y];
     }
 
+    getBestMove(testVectors) {
+        const noopTileX = Math.floor(testVectors[NOOP].x);
+        const noopTileY = Math.floor(testVectors[NOOP].y);
+        if(noopTileX < TILE_MAP_WIDTH && noopTileY < TILE_MAP_WIDTH && (this.map[noopTileX][noopTileY] === ROAD || this.map[noopTileX][noopTileY] === CHECKPOINT)) return NOOP;
+        const leftTileX = Math.floor(testVectors[LEFT].x);
+        const leftTileY = Math.floor(testVectors[LEFT].y);
+        if(leftTileX < TILE_MAP_WIDTH && leftTileY < TILE_MAP_WIDTH && (this.map[leftTileX][leftTileY] === ROAD || this.map[leftTileX][leftTileY] === CHECKPOINT)) return LEFT;
+        const rightTileX = Math.floor(testVectors[RIGHT].x);
+        const rightTileY = Math.floor(testVectors[RIGHT].y);
+        if(rightTileX < TILE_MAP_WIDTH && rightTileY < TILE_MAP_WIDTH && (this.map[rightTileX][rightTileY] === ROAD || this.map[rightTileX][rightTileY] === CHECKPOINT)) return RIGHT;
+        if(noopTileX < TILE_MAP_WIDTH && noopTileY < TILE_MAP_WIDTH && this.map[noopTileX][noopTileY] === GRASS) return NOOP;
+        if(leftTileX < TILE_MAP_WIDTH && leftTileY < TILE_MAP_WIDTH && this.map[leftTileX][leftTileY] === GRASS) return LEFT;
+        if(rightTileX < TILE_MAP_WIDTH && rightTileY < TILE_MAP_WIDTH && this.map[rightTileX][rightTileY] === GRASS) return RIGHT;
+        console.log("NoopX: " + noopTileX);
+        console.log("NoopY: " + noopTileY);
+        console.log("LeftX: " + leftTileX);
+        console.log("LeftY: " + leftTileY);
+        console.log("RightX: " + rightTileX);
+        console.log("RightY: " + rightTileY + "\n\n");
+        return -1;
+    }
+
     getCheckpoints() {
         return this.checkPoints;
     }

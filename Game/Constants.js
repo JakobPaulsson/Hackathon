@@ -13,12 +13,12 @@ const START_X = 40;
 const START_Y = 30;
 const START_ANGLE = -Math.PI/2;
 const ROAD_VELOCITY = 0.2;
-const GRASS_VELOCITY = ROAD_VELOCITY/2;
+const GRASS_VELOCITY = ROAD_VELOCITY/4;
 
 //MAP
 const TILE_MAP_WIDTH = 50;
 const TILE_WIDTH = 10;
-const NUMBER_OF_ROCKS = 100;
+const NUMBER_OF_ROCKS = 200;
 
 //TILES
 const GRASS = 0;
@@ -30,7 +30,7 @@ const GOAL = 5;
 const CHECKPOINT = 6;
 
 //AI
-const TEST_STEPS = 10;
+const TEST_STEPS = 25;
 const RIGHT = 0;
 const NOOP = 1;
 const LEFT = 2;

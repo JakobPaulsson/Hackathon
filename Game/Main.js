@@ -12,7 +12,7 @@ function run() {
   }
   , 4000);
 
-  console.log(gameState.gameStateToString());
+  //console.log(gameState.gameStateToString());
 }
 
 function runGame(gameState, context, window) {

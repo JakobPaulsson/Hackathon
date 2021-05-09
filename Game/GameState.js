@@ -12,10 +12,13 @@ class GameState {
   update() {
     const carVector = new Vector(Math.floor(this.car.center.x), Math.floor(this.car.center.y))
     const aiCarVector = new Vector(Math.floor(this.aicar.center.x), Math.floor(this.aicar.center.y))
+    const testVectors = this.aicar.testAllMoves();
     const tile = this.map.getTile(carVector);
     const aiTile = this.map.getTile(aiCarVector);
+    const bestMove = this.map.getBestMove(testVectors);
+    console.log(bestMove);
     this.car.update(tile);
-    this.aicar.update(aiTile);
+    this.aicar.update(aiTile, bestMove);
   }
 
   render(context) {

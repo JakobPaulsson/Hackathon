@@ -90,7 +90,6 @@ class Car {
     this.center.x = START_X;
     this.center.y = START_Y;
     this.angle = START_ANGLE;
-    console.log(this.currentCheckpoint);
   }
 
   checkTurn() {
@@ -108,7 +107,6 @@ class Car {
   checkPoint() {
     if(this.currentCheckpoint === NUMBER_OF_CHECKPOINTS) return;
     for(var i = 0; i < this.checkPoints[this.currentCheckpoint].length; i++) {
-
       if (
         Math.floor(this.center.x) === this.checkPoints[this.currentCheckpoint][i][0] &&
         Math.floor(this.center.y) === this.checkPoints[this.currentCheckpoint][i][1]
@@ -125,7 +123,6 @@ class Car {
   }
 
   bounceVertical() {
-    console.log("meme");
     this.angle = Math.PI - this.angle;
     this.move();
   }
