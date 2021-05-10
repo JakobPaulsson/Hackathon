@@ -44,7 +44,6 @@ class Car {
       case 38:
         break;
       default:
-        //console.log("unhandled key: " + event.keyCode);
         break;
     }
   }
@@ -63,7 +62,6 @@ class Car {
         this.turningRight = false;
         break;
       default:
-        //console.log("unhandled key: " + event.keyCode);
         break;
     }
   }

@@ -11,8 +11,6 @@ function run() {
     clearInterval(interval);
   }
   , 4000);
-
-  //console.log(gameState.gameStateToString());
 }
 
 function runGame(gameState, context, window) {
