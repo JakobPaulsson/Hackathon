@@ -30,7 +30,7 @@ const GOAL = 5;
 const CHECKPOINT = 6;
 
 //AI
-const TEST_STEPS = 10;
+const TEST_STEPS = 15;
 const RIGHT = 0;
 const NOOP = 1;
 const LEFT = 2;

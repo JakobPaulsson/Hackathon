@@ -152,12 +152,30 @@ class Map {
         const rightTileWithinBorder = rightVector.x < TILE_MAP_WIDTH && rightVector.y < TILE_MAP_WIDTH;
         const rightTileIsDesiredTile = rightTile === ROAD || rightTile === CHECKPOINT || rightTile === GOAL;
 
-        if(noopTileWithinBorder && noopTileIsDesiredTile) return NOOP;
-        if(leftTileWithinBorder && leftTileIsDesiredTile) return LEFT;
-        if(rightTileWithinBorder && rightTileIsDesiredTile) return RIGHT;
-        if(noopTileWithinBorder && noopTileIsDesiredTile) return NOOP;
-        if(leftTileWithinBorder && leftTileIsDesiredTile) return LEFT;
-        if(rightTileWithinBorder && rightTileIsDesiredTile) return RIGHT;
+        if(noopTileWithinBorder && noopTileIsDesiredTile) {
+            this.chosenMove = NOOP
+            return NOOP;
+        }
+        if(leftTileWithinBorder && leftTileIsDesiredTile) {
+            this.chosenMove = LEFT
+            return LEFT;
+        }
+        if(rightTileWithinBorder && rightTileIsDesiredTile) {
+            this.chosenMove = RIGHT
+            return RIGHT;
+        }
+        if(noopTileWithinBorder) {
+            this.chosenMove = NOOP
+            return NOOP;
+        }
+        if(leftTileWithinBorder) {
+            this.chosenMove = LEFT
+            return LEFT;
+        }
+        if(rightTileWithinBorder) {
+            this.chosenMove = RIGHT
+            return RIGHT;
+        }
         return NOOP;
     }
 
@@ -167,7 +185,6 @@ class Map {
 
     render(context, testVectors) {
         const rectangleWidth = CANVAS_WIDTH/TILE_MAP_WIDTH;
-        
         for(var i = 0; i < TILE_MAP_WIDTH; i++) {
             for(var j = 0; j < TILE_MAP_WIDTH; j++) {
                 switch(this.map[i][j]) {
@@ -193,16 +210,17 @@ class Map {
                 context.fillRect(i * rectangleWidth, j * rectangleWidth, rectangleWidth, rectangleWidth);
             }
         }
+        this.renderAiPoints(context, testVectors)
+    }
+
+    renderAiPoints(context, testVectors) {
+        const rectangleWidth = CANVAS_WIDTH/TILE_MAP_WIDTH;
         context.fillStyle = "rgba(255, 0, 0, 0.8)";
-        context.beginPath();
-        context.arc(testVectors[NOOP].x * rectangleWidth, testVectors[NOOP].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
-        context.fill();
-        context.beginPath();
-        context.arc(testVectors[LEFT].x * rectangleWidth, testVectors[LEFT].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
-        context.fill();
-        context.beginPath();
-        context.arc(testVectors[RIGHT].x * rectangleWidth, testVectors[RIGHT].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
-        context.fill();
+        for(var i = RIGHT; i <= LEFT; i++) {
+            context.beginPath();
+            context.arc(testVectors[i].x * rectangleWidth, testVectors[i].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
+            context.fill();
+        }
         if(this.chosenMove !== -1) {
             context.fillStyle = "rgba(0, 255, 0, 0.8)";
             context.beginPath();
