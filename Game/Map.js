@@ -9,6 +9,7 @@ class Map {
         this.createMap();
         this.generateRocks();
         this.generateWalls();
+        this.chosenMove = -1;
     }
 
     initializeMap() {
@@ -144,22 +145,19 @@ class Map {
 
         const noopTileWithinBorder = noopVector.x < TILE_MAP_WIDTH && noopVector.y < TILE_MAP_WIDTH;
         const noopTileIsDesiredTile = noopTile === ROAD || noopTile === CHECKPOINT || noopTile === GOAL;
-        const noopTileIsNonDesiredTile = noopTile === GRASS || noopTile === ROCK || noopTile == HORIZONTAL_WALL || noopTile == VERTICAL_WALL;
 
         const leftTileWithinBorder = leftVector.x < TILE_MAP_WIDTH && leftVector.y < TILE_MAP_WIDTH;
         const leftTileIsDesiredTile = leftTile === ROAD || leftTile === CHECKPOINT || leftTile === GOAL;
-        const leftTileIsNonDesiredTile = leftTile === GRASS || leftTile === ROCK || leftTile == HORIZONTAL_WALL || leftTile == VERTICAL_WALL;
 
         const rightTileWithinBorder = rightVector.x < TILE_MAP_WIDTH && rightVector.y < TILE_MAP_WIDTH;
         const rightTileIsDesiredTile = rightTile === ROAD || rightTile === CHECKPOINT || rightTile === GOAL;
-        const rightTileIsNonDesiredTile = rightTile === GRASS || rightTile === ROCK || rightTile == HORIZONTAL_WALL || rightTile == VERTICAL_WALL;
 
         if(noopTileWithinBorder && noopTileIsDesiredTile) return NOOP;
         if(leftTileWithinBorder && leftTileIsDesiredTile) return LEFT;
         if(rightTileWithinBorder && rightTileIsDesiredTile) return RIGHT;
-        if(noopTileWithinBorder && noopTileIsNonDesiredTile) return NOOP;
-        if(leftTileWithinBorder && leftTileIsNonDesiredTile) return LEFT;
-        if(rightTileWithinBorder && rightTileIsNonDesiredTile) return RIGHT;
+        if(noopTileWithinBorder && noopTileIsDesiredTile) return NOOP;
+        if(leftTileWithinBorder && leftTileIsDesiredTile) return LEFT;
+        if(rightTileWithinBorder && rightTileIsDesiredTile) return RIGHT;
         return NOOP;
     }
 
@@ -167,7 +165,7 @@ class Map {
         return this.checkPoints;
     }
 
-    render(context) {
+    render(context, testVectors) {
         const rectangleWidth = CANVAS_WIDTH/TILE_MAP_WIDTH;
         
         for(var i = 0; i < TILE_MAP_WIDTH; i++) {
@@ -194,6 +192,22 @@ class Map {
                 }
                 context.fillRect(i * rectangleWidth, j * rectangleWidth, rectangleWidth, rectangleWidth);
             }
+        }
+        context.fillStyle = "rgba(255, 0, 0, 0.8)";
+        context.beginPath();
+        context.arc(testVectors[NOOP].x * rectangleWidth, testVectors[NOOP].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
+        context.fill();
+        context.beginPath();
+        context.arc(testVectors[LEFT].x * rectangleWidth, testVectors[LEFT].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
+        context.fill();
+        context.beginPath();
+        context.arc(testVectors[RIGHT].x * rectangleWidth, testVectors[RIGHT].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
+        context.fill();
+        if(this.chosenMove !== -1) {
+            context.fillStyle = "rgba(0, 255, 0, 0.8)";
+            context.beginPath();
+            context.arc(testVectors[this.chosenMove].x * rectangleWidth, testVectors[this.chosenMove].y * rectangleWidth, rectangleWidth/2, 0, 2 * Math.PI);
+            context.fill();
         }
     }
 
