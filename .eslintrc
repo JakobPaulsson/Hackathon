@@ -1,0 +1,31 @@
+{
+    "globals": {
+        "CANVAS_WIDTH": true,
+        "CANVAS_HEIGHT": true,
+        "FPS": true,
+        "LAPS": true,
+        "NUMBER_OF_CHECKPOINTS": true,
+        "TURNING_SPEED": true,
+        "START_X": true,
+        "START_Y": true,
+        "START_ANGLE": true,
+        "ROAD_VELOCITY": true,
+        "GRASS_VELOCITY": true,
+        "TILE_MAP_WIDTH": true,
+        "TILE_WIDTH": true,
+        "NUMBER_OF_ROCKS": true,
+        "GRASS": true,
+        "ROAD": true,
+        "ROCK": true,
+        "HORIZONTAL_WALL": true,
+        "VERTICAL_WALL": true  ,  
+        "GOAL": true,
+        "CHECKPOINT": true,
+        "TEST_STEPS": true,
+        "RIGHT": true,
+        "NOOP": true,
+        "LEFT": true,
+        "START_X_AI": true,
+        "START_Y_AI": true
+    }
+}
